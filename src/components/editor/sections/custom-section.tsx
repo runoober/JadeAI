@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { EditableText } from '../fields/editable-text';
 import { EditableRichText } from '../fields/editable-rich-text';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, CustomContent, CustomItem } from '@/types/resume';
 
 interface Props {
@@ -20,7 +21,7 @@ export function CustomSection({ section, onUpdate }: Props) {
   const items = content.items || [];
 
   const addItem = () => {
-    const newItem: CustomItem = { id: crypto.randomUUID(), title: '', description: '' };
+    const newItem: CustomItem = { id: generateId(), title: '', description: '' };
     onUpdate({ items: [...items, newItem] } as any);
   };
 

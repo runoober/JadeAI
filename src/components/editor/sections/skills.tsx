@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EditableText } from '../fields/editable-text';
 import { EditableList } from '../fields/editable-list';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, SkillsContent, SkillCategory } from '@/types/resume';
 
 interface Props {
@@ -20,7 +21,7 @@ export function SkillsSection({ section, onUpdate }: Props) {
 
   const addCategory = () => {
     const newCategory: SkillCategory = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: '',
       skills: [],
     };

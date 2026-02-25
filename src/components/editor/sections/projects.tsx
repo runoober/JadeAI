@@ -9,6 +9,7 @@ import { EditableDate } from '../fields/editable-date';
 import { EditableRichText } from '../fields/editable-rich-text';
 import { EditableList } from '../fields/editable-list';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, ProjectsContent, ProjectItem } from '@/types/resume';
 
 interface Props {
@@ -23,7 +24,7 @@ export function ProjectsSection({ section, onUpdate }: Props) {
 
   const addItem = () => {
     const newItem: ProjectItem = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       name: '',
       description: '',
       technologies: [],

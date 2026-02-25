@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { Resume, ResumeSection, SectionContent } from '@/types/resume';
 import { AUTOSAVE_DELAY } from '@/lib/constants';
+import { generateId } from '@/lib/utils';
 import { useSettingsStore } from '@/stores/settings-store';
 
 interface ResumeStore {
@@ -42,14 +43,14 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
       if (Array.isArray(content?.items)) {
         content.items = (content.items as any[]).map((item) =>
           typeof item === 'object' && item !== null && !item.id
-            ? { ...item, id: crypto.randomUUID() }
+            ? { ...item, id: generateId() }
             : item
         );
       }
       if (Array.isArray(content?.categories)) {
         content.categories = (content.categories as any[]).map((cat) =>
           typeof cat === 'object' && cat !== null && !cat.id
-            ? { ...cat, id: crypto.randomUUID() }
+            ? { ...cat, id: generateId() }
             : cat
         );
       }

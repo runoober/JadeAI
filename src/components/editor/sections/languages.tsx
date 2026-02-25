@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EditableText } from '../fields/editable-text';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, LanguagesContent, LanguageItem } from '@/types/resume';
 
 interface Props {
@@ -19,7 +20,7 @@ export function LanguagesSection({ section, onUpdate }: Props) {
   const items = content.items || [];
 
   const addItem = () => {
-    const newItem: LanguageItem = { id: crypto.randomUUID(), language: '', proficiency: '' };
+    const newItem: LanguageItem = { id: generateId(), language: '', proficiency: '' };
     onUpdate({ items: [...items, newItem] } as any);
   };
 

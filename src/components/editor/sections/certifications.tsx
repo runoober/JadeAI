@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { EditableText } from '../fields/editable-text';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, CertificationsContent, CertificationItem } from '@/types/resume';
 
 interface Props {
@@ -19,7 +20,7 @@ export function CertificationsSection({ section, onUpdate }: Props) {
   const items = content.items || [];
 
   const addItem = () => {
-    const newItem: CertificationItem = { id: crypto.randomUUID(), name: '', issuer: '', date: '' };
+    const newItem: CertificationItem = { id: generateId(), name: '', issuer: '', date: '' };
     onUpdate({ items: [...items, newItem] } as any);
   };
 

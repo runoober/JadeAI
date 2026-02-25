@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { config } from '@/lib/config';
+import { generateId } from '@/lib/utils';
 
 export function useFingerprint() {
   const [fingerprint, setFingerprint] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function useFingerprint() {
         setFingerprint(visitorId);
       } catch {
         // Fallback: generate a random ID
-        const fallbackId = crypto.randomUUID();
+        const fallbackId = generateId();
         localStorage.setItem('jade_fingerprint', fallbackId);
         setFingerprint(fallbackId);
       } finally {

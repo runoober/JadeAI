@@ -8,6 +8,7 @@ import { EditableText } from '../fields/editable-text';
 import { EditableDate } from '../fields/editable-date';
 import { EditableList } from '../fields/editable-list';
 import { FieldWrapper } from '../fields/field-wrapper';
+import { generateId } from '@/lib/utils';
 import type { ResumeSection, EducationContent, EducationItem } from '@/types/resume';
 
 interface Props {
@@ -22,7 +23,7 @@ export function EducationSection({ section, onUpdate }: Props) {
 
   const addItem = () => {
     const newItem: EducationItem = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       institution: '',
       degree: '',
       field: '',

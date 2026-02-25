@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Plus, GripVertical, User, FileText, Briefcase, GraduationCap, Wrench, FolderKanban, Award, Languages, LayoutList, Pencil } from 'lucide-react';
+import { generateId } from '@/lib/utils';
 import {
   DndContext,
   closestCenter,
@@ -202,7 +203,7 @@ export function EditorSidebar({ sections, onAddSection, onReorderSections }: Edi
 
   const handleAddSection = (type: SectionType) => {
     const newSection: ResumeSection = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       resumeId: '',
       type,
       title: sectionTypeLabels[type] || type,

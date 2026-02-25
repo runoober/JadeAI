@@ -6,6 +6,7 @@ import { DefaultChatTransport } from 'ai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useResumeStore } from '@/stores/resume-store';
 import { useSettingsStore, getAIHeaders } from '@/stores/settings-store';
+import { generateId } from '@/lib/utils';
 
 interface UseAIChatOptions {
   resumeId: string;
@@ -106,12 +107,12 @@ export function useAIChat({ resumeId, sessionId, initialMessages, selectedModel 
     // Check if API key is configured
     if (!useSettingsStore.getState().aiApiKey) {
       const userMsg: UIMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: 'user',
         parts: [{ type: 'text', text: input }],
       };
       const errorMsg: UIMessage = {
-        id: crypto.randomUUID(),
+        id: generateId(),
         role: 'assistant',
         parts: [{ type: 'text', text: '__API_KEY_MISSING__' }],
       };
