@@ -53,6 +53,9 @@ importers:
       lucide-react:
         specifier: ^0.563.0
         version: 0.563.0(react@19.2.3)
+      mupdf:
+        specifier: ^1.27.0
+        version: 1.27.0
       next:
         specifier: 16.1.6
         version: 16.1.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4287,6 +4290,9 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  mupdf@1.27.0:
+    resolution: {integrity: sha512-vEPUYwZeu5NgiFLz4e20R7Vp2pNY7szirGEvTxHyQQpQs6ab4DeGdonwT6sH1JZG5EhyHSrojZrZn2/0ee6qZQ==}
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -9637,6 +9643,8 @@ snapshots:
       typescript: 5.9.3
     transitivePeerDependencies:
       - '@types/node'
+
+  mupdf@1.27.0: {}
 
   mute-stream@2.0.0: {}
 

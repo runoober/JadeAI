@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
+import type { ModelMessage } from 'ai';
 import { getModel, extractAIConfig, AIConfigError } from '@/lib/ai/provider';
 import { resolveUser, getUserIdFromRequest } from '@/lib/auth/helpers';
 import { resumeRepository } from '@/lib/db/repositories/resume.repository';
@@ -14,10 +15,10 @@ const ACCEPTED_TYPES = [
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-const SYSTEM_PROMPT = `You are a resume parser. Extract ALL information from the resume image into the EXACT JSON schema below.
+const SYSTEM_PROMPT = `You are a resume parser. Extract ALL information from the resume into the EXACT JSON schema below.
 
 REQUIRED JSON SCHEMA:
-{"personalInfo":{"fullName":"","jobTitle":"","email":"","phone":"","location":"","website":"","linkedin":"","github":""},"summary":"","workExperience":[{"company":"","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM or null","current":false,"description":"","highlights":["bullet point 1","bullet point 2"]}],"education":[{"institution":"","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]}],"skills":[{"name":"category name","skills":["skill1","skill2"]}],"projects":[{"name":"","description":"","technologies":[],"highlights":[]}],"certifications":[{"name":"","issuer":"","date":""}],"languages":[{"language":"","proficiency":""}]}
+{"personalInfo":{"fullName":"","jobTitle":"","email":"","phone":"","location":"","website":"","linkedin":"","github":""},"summary":"","workExperience":[{"company":"Company A","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM or null","current":false,"description":"","highlights":["bullet 1","bullet 2"]},{"company":"Company B","position":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","current":false,"description":"","highlights":[]}],"education":[{"institution":"University A","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]},{"institution":"University B","degree":"","field":"","location":"","startDate":"YYYY-MM","endDate":"YYYY-MM","gpa":"","highlights":[]}],"skills":[{"name":"category name","skills":["skill1","skill2"]}],"projects":[{"name":"Project A","description":"","technologies":[],"highlights":[]},{"name":"Project B","description":"","technologies":[],"highlights":[]}],"certifications":[{"name":"","issuer":"","date":""}],"languages":[{"language":"","proficiency":""}]}
 
 RULES:
 - You MUST use the EXACT field names shown above (fullName, jobTitle, workExperience, etc.)
@@ -26,7 +27,8 @@ RULES:
 - Use YYYY-MM for dates. Empty string "" for missing fields.
 - For current jobs: current=true, endDate=null.
 - Omit empty arrays (e.g. if no projects, omit "projects" entirely).
-- Capture ALL details: every work entry, every skill, every bullet point.`;
+- Extract ALL items for EVERY section — every work experience, every project, every education entry, every certification, every language. Do NOT merge or omit any entries. If the resume has 3 projects, return 3 objects in the projects array. If the resume has 5 work experiences, return 5 objects in the workExperience array.
+- Read ALL pages of the document thoroughly. Information may span multiple pages.`;
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,24 +62,56 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const base64 = buffer.toString('base64');
-    const dataUrl = `data:${file.type};base64,${base64}`;
 
     const aiConfig = extractAIConfig(request);
     const model = getModel(aiConfig);
+
+    // Build messages based on file type
+    const messages: ModelMessage[] = [];
+    const isPdf = file.type === 'application/pdf';
+
+    if (isPdf) {
+      // Try to extract text from PDF first
+      const pdfText = await extractPdfText(buffer);
+
+      if (pdfText.length > 200) {
+        // Text-based PDF — send extracted text directly (handles multi-page perfectly)
+        console.log('[parse] PDF text extraction: %d chars', pdfText.length);
+        messages.push({
+          role: 'user',
+          content: `Below is the full text extracted from a resume PDF. Extract all resume information using the EXACT JSON schema from the system prompt.\n\n---\n${pdfText}\n---`,
+        });
+      } else {
+        // Scanned/image-based PDF — convert each page to an image
+        console.log('[parse] PDF has little text (%d chars), converting pages to images', pdfText.length);
+        const pageImages = await pdfPagesToImages(buffer);
+        console.log('[parse] Converted %d PDF pages to images', pageImages.length);
+        const contentParts: Array<{ type: 'image'; image: string } | { type: 'text'; text: string }> = [];
+        for (const png of pageImages) {
+          contentParts.push({ type: 'image', image: `data:image/png;base64,${Buffer.from(png).toString('base64')}` });
+        }
+        contentParts.push({ type: 'text', text: 'Extract all resume information from these resume page images. Use the EXACT JSON schema from the system prompt.' });
+        messages.push({ role: 'user', content: contentParts });
+      }
+    } else {
+      // Image file — send as image directly
+      const base64 = buffer.toString('base64');
+      const dataUrl = `data:${file.type};base64,${base64}`;
+      messages.push({
+        role: 'user',
+        content: [
+          { type: 'image', image: dataUrl },
+          { type: 'text', text: 'Extract all resume information from this image. Use the EXACT JSON schema from the system prompt.' },
+        ],
+      });
+    }
 
     // Single call — generateText with explicit schema in prompt
     const result = await generateText({
       model,
       maxOutputTokens: 16384,
       system: SYSTEM_PROMPT,
-      messages: [{
-        role: 'user',
-        content: [
-          { type: 'image', image: dataUrl },
-          { type: 'text', text: 'Extract all resume information from this image. Use the EXACT JSON schema from the system prompt.' },
-        ],
-      }],
+      messages,
       providerOptions: {
         openai: {
           response_format: { type: 'json_object' },
@@ -130,6 +164,48 @@ export async function POST(request: NextRequest) {
     console.error('POST /api/resume/parse error:', error);
     return NextResponse.json({ error: 'Failed to parse resume' }, { status: 500 });
   }
+}
+
+// ─── PDF Helpers ─────────────────────────────────────────────────────────────
+
+async function loadMupdfDoc(buffer: Uint8Array) {
+  const mupdf = await import('mupdf');
+  return { mupdf, doc: mupdf.Document.openDocument(buffer, 'application/pdf') };
+}
+
+function extractPdfText(buffer: Buffer): Promise<string> {
+  return loadMupdfDoc(new Uint8Array(buffer)).then(({ doc }) => {
+    const pageCount = doc.countPages();
+    const parts: string[] = [];
+    for (let i = 0; i < pageCount; i++) {
+      const page = doc.loadPage(i);
+      parts.push(page.toStructuredText('preserve-whitespace').asText());
+    }
+    return parts.join('\n').trim();
+  }).catch((e) => {
+    console.warn('[parse] mupdf text extraction failed:', (e as Error).message);
+    return '';
+  });
+}
+
+async function pdfPagesToImages(buffer: Uint8Array): Promise<Uint8Array[]> {
+  const { mupdf, doc } = await loadMupdfDoc(buffer);
+  const pageCount = doc.countPages();
+  const images: Uint8Array[] = [];
+
+  for (let i = 0; i < pageCount; i++) {
+    const page = doc.loadPage(i);
+    // Render at 2x scale for better OCR quality
+    const pixmap = page.toPixmap(
+      mupdf.Matrix.scale(2, 2),
+      mupdf.ColorSpace.DeviceRGB,
+      false, // no alpha
+      true,  // annots
+    );
+    images.push(pixmap.asPNG());
+  }
+
+  return images;
 }
 
 // ─── JSON Parsing ────────────────────────────────────────────────────────────
