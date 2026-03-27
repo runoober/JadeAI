@@ -12,9 +12,10 @@ interface ControlBarProps {
   lastAssistantMessageId?: string;
   isLoading: boolean;
   onTriggerAI: (text: string) => void;
+  onEndRound: () => void;
 }
 
-export function useInterviewControls({ sessionId, roundId, lastAssistantMessageId, isLoading, onTriggerAI }: ControlBarProps) {
+export function useInterviewControls({ sessionId, roundId, lastAssistantMessageId, isLoading, onTriggerAI, onEndRound }: ControlBarProps) {
   const t = useTranslations('interview.room');
   const locale = useLocale();
   const { markedMessages, toggleMark, addHinted, addSkipped } = useInterviewStore();
@@ -47,7 +48,7 @@ export function useInterviewControls({ sessionId, roundId, lastAssistantMessageI
 
   const handleEndRound = async () => {
     await sendControl('end_round');
-    onTriggerAI('[结束本轮面试]');
+    onEndRound();
   };
 
   const handlePause = async () => {

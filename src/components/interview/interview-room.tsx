@@ -89,10 +89,15 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
 
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant');
 
-  // Trigger AI after control actions (skip/hint/end-round)
+  // Trigger AI after control actions (skip/hint)
   const handleTriggerAI = useCallback((text: string) => {
     sendMessage({ text });
   }, [sendMessage]);
+
+  // Directly end round without AI response
+  const handleEndRound = useCallback(() => {
+    setShowTransition(true);
+  }, []);
 
   // Hook must be called unconditionally before any early returns
   const controls = useInterviewControls({
@@ -101,6 +106,7 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
     lastAssistantMessageId: lastAssistantMsg?.id,
     isLoading,
     onTriggerAI: handleTriggerAI,
+    onEndRound: handleEndRound,
   });
 
   if (!currentRound) return null;
