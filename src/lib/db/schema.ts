@@ -101,3 +101,10 @@ export const grammarChecks = sqliteTable('grammar_checks', {
   issueCount: integer('issue_count').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`(unixepoch())`),
 });
+
+export {
+  interviewSessions,
+  interviewRounds,
+  interviewMessages,
+  interviewReports,
+} from './schema-interview';

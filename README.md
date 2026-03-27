@@ -58,6 +58,14 @@ Join our groups for discussion and support:
 |:---:|
 | ![QR Code Section](images/二维码.png) |
 
+| Interview Setup | Mock Interview |
+|:---:|:---:|
+| ![Interview Setup](images/新建面试.png) | ![Mock Interview](images/模拟面试.png) |
+
+| Interview List | Interview Report |
+|:---:|:---:|
+| ![Interview List](images/面试列表.png) | ![Interview Report](images/面试报告.png) |
+
 ## Deployment Video
 
 Watch the full deployment walkthrough on Bilibili:
@@ -112,6 +120,17 @@ The following resume sections support Markdown syntax:
 - **Grammar & Writing Check** — Detect weak verbs, vague descriptions, and grammar issues; returns a quality score
 - **Translation** — Translate resume content across 10 languages while preserving technical terms
 - **Flexible AI Provider** — Supports OpenAI, Anthropic, and custom API endpoints; each user configures their own key in-app
+
+### Mock Interview
+
+- **JD-Based Interview Simulation** — Paste a job description, AI plays different interviewer roles in sequence
+- **6 Preset Interviewers** — HR, Technical, Scenario, Behavioral, Project Deep Dive, Leader — each with unique personality and questioning style
+- **Custom Interviewers** — Create your own interviewer with custom focus areas and style
+- **Smart Follow-ups** — AI adapts questions based on answer quality, probing deeper when needed
+- **Interview Controls** — Skip questions, request hints, mark for review, pause/resume
+- **Detailed Report** — Per-question scoring, competency radar chart, improvement plan with resources
+- **History Comparison** — Track score trends and dimension progress across interviews
+- **PDF & Markdown Export** — Export interview reports for offline review
 
 ### Export & Sharing
 

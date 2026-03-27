@@ -108,3 +108,52 @@ export const grammarChecks = pgTable('grammar_checks', {
   issueCount: integer('issue_count').notNull(),
   createdAt: integer('created_at').notNull().default(epochNow),
 });
+
+// ── Interview simulation tables ──
+
+export const interviewSessions = pgTable('interview_sessions', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id').notNull(),
+  resumeId: text('resume_id'),
+  jobDescription: text('job_description').notNull(),
+  jobTitle: text('job_title').notNull().default(''),
+  selectedInterviewers: text('selected_interviewers').notNull().default('[]'),
+  currentRound: integer('current_round').notNull().default(0),
+  status: text('status').notNull().default('preparing'),
+  createdAt: integer('created_at').notNull().default(epochNow),
+  updatedAt: integer('updated_at').notNull().default(epochNow),
+});
+
+export const interviewRounds = pgTable('interview_rounds', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  sessionId: text('session_id').notNull(),
+  interviewerType: text('interviewer_type').notNull(),
+  interviewerConfig: text('interviewer_config').notNull(),
+  sortOrder: integer('sort_order').notNull().default(0),
+  status: text('status').notNull().default('pending'),
+  questionCount: integer('question_count').notNull().default(0),
+  maxQuestions: integer('max_questions').notNull().default(10),
+  summary: text('summary'),
+  createdAt: integer('created_at').notNull().default(epochNow),
+  updatedAt: integer('updated_at').notNull().default(epochNow),
+});
+
+export const interviewMessages = pgTable('interview_messages', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  roundId: text('round_id').notNull(),
+  role: text('role').notNull(),
+  content: text('content').notNull(),
+  metadata: text('metadata').default('{}'),
+  createdAt: integer('created_at').notNull().default(epochNow),
+});
+
+export const interviewReports = pgTable('interview_reports', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  sessionId: text('session_id').notNull().unique(),
+  overallScore: integer('overall_score').notNull(),
+  dimensionScores: text('dimension_scores').notNull(),
+  roundEvaluations: text('round_evaluations').notNull(),
+  overallFeedback: text('overall_feedback').notNull(),
+  improvementPlan: text('improvement_plan').notNull(),
+  createdAt: integer('created_at').notNull().default(epochNow),
+});

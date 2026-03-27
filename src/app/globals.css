@@ -269,3 +269,8 @@
 .ai-markdown td {
   @apply border border-zinc-200 px-2 py-1 text-zinc-600 dark:border-zinc-700 dark:text-zinc-400;
 }
+
+@keyframes thinkingWave {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1.2); }
+}

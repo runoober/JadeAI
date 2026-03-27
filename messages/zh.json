@@ -24,6 +24,7 @@
     "agreeTerms": "登录即表示你同意我们的服务条款和隐私政策"
   },
   "dashboard": {
+    "nav": "工作台",
     "title": "我的简历",
     "createResume": "新建简历",
     "createResumeDescription": "从空白模板开始创建新简历",
@@ -748,5 +749,123 @@
     "invalidPassword": "密码错误，请重试。",
     "notFound": "此简历不存在或已被删除。",
     "viewOnJadeAI": "前往 JadeAI"
+  },
+  "interview": {
+    "nav": "面试模拟",
+    "title": "面试模拟",
+    "lobby": {
+      "title": "我的面试",
+      "newInterview": "新建面试",
+      "noInterviews": "还没有面试记录，开始一场模拟面试吧",
+      "status": {
+        "preparing": "准备中",
+        "in_progress": "进行中",
+        "paused": "已暂停",
+        "completed": "已完成"
+      },
+      "score": "综合评分",
+      "rounds": "{count} 轮面试",
+      "continue": "继续面试",
+      "viewReport": "查看报告",
+      "deleteConfirm": "确定要删除这场面试记录吗？此操作不可恢复。"
+    },
+    "setup": {
+      "title": "新建面试",
+      "jdLabel": "岗位描述 (JD)",
+      "jdPlaceholder": "请粘贴岗位描述...",
+      "jdCharCount": "{count}/5000",
+      "resumeLabel": "关联简历（可选）",
+      "resumePlaceholder": "选择一份简历",
+      "resumeNone": "不关联简历",
+      "resumeHint": "关联简历后，面试官可以针对你的项目经历进行深入提问",
+      "interviewerLabel": "选择面试官",
+      "interviewerHint": "拖拽调整面试顺序，至少选择一位面试官",
+      "customInterviewer": "自定义面试官",
+      "titleLabel": "面试标题",
+      "titlePlaceholder": "如：高级前端工程师面试",
+      "startInterview": "开始面试",
+      "custom": {
+        "title": "自定义面试官",
+        "name": "面试官名称",
+        "namePlaceholder": "如：产品总监",
+        "jobTitle": "职位头衔",
+        "jobTitlePlaceholder": "如：产品副总裁",
+        "bio": "简介",
+        "bioPlaceholder": "描述面试官的背景...",
+        "style": "提问风格",
+        "stylePlaceholder": "描述提问方式...",
+        "focusAreas": "考察维度（逗号分隔）",
+        "focusAreasPlaceholder": "如：产品思维, 数据分析, 用户洞察",
+        "personality": "性格特征",
+        "personalityPlaceholder": "如：严谨、注重细节",
+        "add": "添加"
+      }
+    },
+    "room": {
+      "round": "第 {current} 轮 / 共 {total} 轮",
+      "questionProgress": "问题 {current}/{max}",
+      "skip": "跳过",
+      "hint": "请求提示",
+      "mark": "标记复习",
+      "unmark": "取消标记",
+      "endRound": "结束本轮",
+      "pause": "暂停面试",
+      "inputPlaceholder": "输入你的回答...",
+      "send": "发送",
+      "nextRound": "进入下一轮",
+      "generating": "面试官正在思考...",
+      "roundComplete": "本轮面试结束",
+      "allComplete": "所有面试轮次已完成",
+      "generateReport": "生成面试报告",
+      "generatingReport": "正在生成报告..."
+    },
+    "report": {
+      "title": "面试报告",
+      "overallScore": "综合评分",
+      "grade": {
+        "excellent": "优秀",
+        "good": "良好",
+        "pass": "合格",
+        "needsImprovement": "需提升"
+      },
+      "overview": "总体评价",
+      "dimensions": "能力维度",
+      "roundEvaluation": "分轮评估",
+      "questionReview": "逐题分析",
+      "question": "问题",
+      "answer": "回答摘要",
+      "highlights": "亮点",
+      "weaknesses": "不足",
+      "reference": "参考思路",
+      "improvement": "改进建议",
+      "priority": {
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      },
+      "resources": "推荐资源",
+      "history": "历史对比",
+      "trend": "评分趋势",
+      "comparedToLast": "对比上次",
+      "comparedToBest": "对比最佳",
+      "improved": "提升",
+      "declined": "下降",
+      "stable": "持平",
+      "exportPdf": "导出 PDF",
+      "exportMarkdown": "导出 Markdown",
+      "backToLobby": "返回面试大厅",
+      "markedForReview": "标记复习",
+      "usedHint": "使用了提示",
+      "skippedQuestion": "已跳过"
+    },
+    "interviewers": {
+      "hr": "HR面",
+      "technical": "技术面",
+      "scenario": "场景面",
+      "behavioral": "行为面",
+      "project_deep_dive": "项目深挖",
+      "leader": "Leader面",
+      "custom": "自定义"
+    }
   }
 }
