@@ -125,11 +125,15 @@ export const interviewRepository = {
   },
 
   async findAllMessagesBySessionId(sessionId: string) {
-    const rounds = await db.select({ id: interviewRounds.id }).from(interviewRounds).where(eq(interviewRounds.sessionId, sessionId)).orderBy(interviewRounds.sortOrder);
-    const roundIds = rounds.map((r: { id: string }) => r.id);
-    if (roundIds.length === 0) return [];
-    const allMessages = await Promise.all(roundIds.map((roundId: string) => this.findMessagesByRoundId(roundId)));
-    return allMessages.flat();
+    const rounds = await db.select().from(interviewRounds).where(eq(interviewRounds.sessionId, sessionId)).orderBy(interviewRounds.sortOrder);
+    if (rounds.length === 0) return [];
+    const result = await Promise.all(
+      rounds.map(async (round: typeof rounds[number]) => {
+        const messages = await this.findMessagesByRoundId(round.id);
+        return { round, messages };
+      })
+    );
+    return result;
   },
 
   async updateMessageMetadata(messageId: string, metadata: InterviewMessageMetadata) {
@@ -166,12 +170,17 @@ export const interviewRepository = {
 
   async findReportsByUserId(userId: string) {
     const sessions = await db
-      .select({ id: interviewSessions.id })
+      .select()
       .from(interviewSessions)
       .where(and(eq(interviewSessions.userId, userId), eq(interviewSessions.status, 'completed')));
-    const sessionIds = sessions.map((s: { id: string }) => s.id);
-    if (sessionIds.length === 0) return [];
-    const reports = await Promise.all(sessionIds.map((sessionId: string) => this.findReportBySessionId(sessionId)));
-    return reports.filter(Boolean);
+    if (sessions.length === 0) return [];
+    const results = await Promise.all(
+      sessions.map(async (session: typeof sessions[number]) => {
+        const report = await this.findReportBySessionId(session.id);
+        if (!report) return null;
+        return { report, session };
+      })
+    );
+    return results.filter((r): r is NonNullable<typeof r> => r !== null);
   },
 };
