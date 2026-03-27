@@ -14,6 +14,7 @@ import { MessageList } from './message-list';
 import { MessageInput } from './message-input';
 import { useInterviewControls } from './control-bar';
 import { RoundTransition } from './round-transition';
+import { ThinkingIndicator } from './thinking-indicator';
 import type { InterviewerConfig } from '@/types/interview';
 
 interface InterviewRoomProps {
@@ -133,7 +134,9 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
       <InterviewerBanner config={interviewerConfig} questionCount={messages.filter((m) => m.role === 'assistant').length} />
       <MessageList messages={messages} interviewerConfig={interviewerConfig} />
       {isLoading && (
-        <p className="px-4 text-sm text-zinc-400">{t('generating')}</p>
+        <div className="px-4">
+          <ThinkingIndicator config={interviewerConfig} />
+        </div>
       )}
       <div className="space-y-2 border-t border-zinc-100 pt-2 pb-2 dark:border-zinc-800">
         {controls}
