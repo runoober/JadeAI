@@ -48,7 +48,18 @@ export const useInterviewStore = create<InterviewStore>((set, get) => ({
   ...initialState,
 
   setSession: (session, rounds) =>
-    set({ currentSession: session, rounds, status: session.status as InterviewStore['status'] }),
+    set({
+      currentSession: session,
+      rounds,
+      currentRoundIndex: session.currentRound ?? 0,
+      questionCount: 0,
+      status: session.status as InterviewStore['status'],
+      markedMessages: new Set(),
+      hintedQuestions: new Set(),
+      skippedQuestions: new Set(),
+      report: null,
+      isGeneratingReport: false,
+    }),
 
   setStatus: (status) => set({ status }),
 
