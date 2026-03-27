@@ -1,9 +1,8 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { SkipForward, Lightbulb, Bookmark, BookmarkCheck, Square, Pause } from 'lucide-react';
+import { SkipForward, Lightbulb, Bookmark, BookmarkCheck, StopCircle, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useInterviewStore } from '@/stores/interview-store';
 import { getAIHeaders } from '@/stores/settings-store';
 
@@ -12,38 +11,10 @@ interface ControlBarProps {
   roundId: string;
   lastAssistantMessageId?: string;
   isLoading: boolean;
+  onTriggerAI: (text: string) => void;
 }
 
-interface IconBtnProps {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  onClick: () => void;
-  disabled?: boolean;
-  variant?: 'destructive';
-}
-
-function IconBtn({ icon: Icon, label, onClick, disabled, variant }: IconBtnProps) {
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className={`h-8 w-8 ${variant === 'destructive' ? 'border-red-200 text-red-500 hover:bg-red-50 dark:border-red-800 dark:hover:bg-red-950' : ''}`}
-          onClick={onClick}
-          disabled={disabled}
-        >
-          <Icon className="h-3.5 w-3.5" />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent side="top">
-        <p>{label}</p>
-      </TooltipContent>
-    </Tooltip>
-  );
-}
-
-export function useInterviewControls({ sessionId, roundId, lastAssistantMessageId, isLoading }: ControlBarProps) {
+export function useInterviewControls({ sessionId, roundId, lastAssistantMessageId, isLoading, onTriggerAI }: ControlBarProps) {
   const t = useTranslations('interview.room');
   const locale = useLocale();
   const { markedMessages, toggleMark, addHinted, addSkipped } = useInterviewStore();
@@ -65,15 +36,18 @@ export function useInterviewControls({ sessionId, roundId, lastAssistantMessageI
   const handleSkip = async () => {
     if (lastAssistantMessageId) addSkipped(lastAssistantMessageId);
     await sendControl('skip');
+    onTriggerAI('[跳过此题]');
   };
 
   const handleHint = async () => {
     if (lastAssistantMessageId) addHinted(lastAssistantMessageId);
     await sendControl('hint');
+    onTriggerAI('[请求提示]');
   };
 
   const handleEndRound = async () => {
     await sendControl('end_round');
+    onTriggerAI('[结束本轮面试]');
   };
 
   const handlePause = async () => {
@@ -94,25 +68,31 @@ export function useInterviewControls({ sessionId, roundId, lastAssistantMessageI
     });
   };
 
-  const left = (
-    <div className="flex gap-1">
-      <IconBtn icon={SkipForward} label={t('skip')} onClick={handleSkip} disabled={isLoading} />
-      <IconBtn icon={Lightbulb} label={t('hint')} onClick={handleHint} disabled={isLoading} />
-      <IconBtn
-        icon={isMarked ? BookmarkCheck : Bookmark}
-        label={isMarked ? t('unmark') : t('mark')}
-        onClick={handleMark}
-        disabled={!lastAssistantMessageId}
-      />
+  const controls = (
+    <div className="flex items-center gap-1">
+      <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={handleSkip} disabled={isLoading}>
+        <SkipForward className="h-3 w-3" />
+        {t('skip')}
+      </Button>
+      <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={handleHint} disabled={isLoading}>
+        <Lightbulb className="h-3 w-3" />
+        {t('hint')}
+      </Button>
+      <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={handleMark} disabled={!lastAssistantMessageId}>
+        {isMarked ? <BookmarkCheck className="h-3 w-3" /> : <Bookmark className="h-3 w-3" />}
+        {isMarked ? t('unmark') : t('mark')}
+      </Button>
+      <div className="mx-1 h-4 w-px bg-zinc-200 dark:bg-zinc-700" />
+      <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-xs text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950" onClick={handleEndRound} disabled={isLoading}>
+        <StopCircle className="h-3 w-3" />
+        {t('endRound')}
+      </Button>
+      <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-lg px-2 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100" onClick={handlePause}>
+        <Pause className="h-3 w-3" />
+        {t('pause')}
+      </Button>
     </div>
   );
 
-  const right = (
-    <div className="flex gap-1">
-      <IconBtn icon={Square} label={t('endRound')} onClick={handleEndRound} disabled={isLoading} variant="destructive" />
-      <IconBtn icon={Pause} label={t('pause')} onClick={handlePause} />
-    </div>
-  );
-
-  return { left, right };
+  return controls;
 }

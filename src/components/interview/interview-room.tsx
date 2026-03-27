@@ -68,12 +68,18 @@ export function InterviewRoom({ sessionId }: InterviewRoomProps) {
 
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant');
 
+  // Trigger AI after control actions (skip/hint/end-round)
+  const handleTriggerAI = useCallback((text: string) => {
+    sendMessage({ text });
+  }, [sendMessage]);
+
   // Hook must be called unconditionally before any early returns
   const controls = useInterviewControls({
     sessionId,
     roundId: currentRound?.id ?? '',
     lastAssistantMessageId: lastAssistantMsg?.id,
     isLoading,
+    onTriggerAI: handleTriggerAI,
   });
 
   if (!currentRound) return null;
@@ -95,21 +101,20 @@ export function InterviewRoom({ sessionId }: InterviewRoomProps) {
   }
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-4" style={{ height: 'calc(100vh - 180px)' }}>
+    <div className="mx-auto flex max-w-4xl flex-col gap-3" style={{ height: 'calc(100vh - 180px)' }}>
       <ProgressBar />
       <InterviewerBanner config={interviewerConfig} />
       <MessageList messages={messages} interviewerConfig={interviewerConfig} />
       {isLoading && (
         <p className="px-4 text-sm text-zinc-400">{t('generating')}</p>
       )}
-      <div className="pb-2">
+      <div className="space-y-2 border-t border-zinc-100 pt-2 pb-2 dark:border-zinc-800">
+        {controls}
         <MessageInput
           input={input}
           isLoading={isLoading}
           onChange={handleInputChange}
           onSubmit={handleSubmit}
-          leftControls={controls.left}
-          rightControls={controls.right}
         />
       </div>
     </div>

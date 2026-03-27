@@ -10,16 +10,13 @@ interface MessageInputProps {
   isLoading: boolean;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  leftControls?: React.ReactNode;
-  rightControls?: React.ReactNode;
 }
 
-export function MessageInput({ input, isLoading, onChange, onSubmit, leftControls, rightControls }: MessageInputProps) {
+export function MessageInput({ input, isLoading, onChange, onSubmit }: MessageInputProps) {
   const t = useTranslations('interview.room');
 
   return (
     <form onSubmit={onSubmit} className="flex items-end gap-2">
-      {leftControls}
       <div className="relative flex-1">
         <Textarea
           value={input}
@@ -44,7 +41,6 @@ export function MessageInput({ input, isLoading, onChange, onSubmit, leftControl
           <ArrowUp className="h-4 w-4" />
         </Button>
       </div>
-      {rightControls}
     </form>
   );
 }
