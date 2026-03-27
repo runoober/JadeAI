@@ -28,6 +28,12 @@ export function Header() {
             >
               {t('templates.nav')}
             </Link>
+            <Link
+              href="/interview"
+              className="text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              {t('interview.nav')}
+            </Link>
           </nav>
         </div>
         <div className="flex items-center gap-3">
