@@ -18,7 +18,8 @@ export function ProgressBar({ onSwitchRound }: ProgressBarProps) {
         const config = round.interviewerConfig as InterviewerConfig;
         const isCurrent = i === currentRoundIndex;
         const isDone = round.status === 'completed' || round.status === 'skipped';
-        const clickable = !!onSwitchRound && i !== currentRoundIndex;
+        const hasStarted = isDone || round.status === 'in_progress';
+        const clickable = !!onSwitchRound && i !== currentRoundIndex && hasStarted;
 
         return (
           <div key={round.id} className="flex items-center">
