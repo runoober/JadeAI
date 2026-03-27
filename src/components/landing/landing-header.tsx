@@ -60,31 +60,32 @@ export function LandingHeader() {
           : 'border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.svg" alt="JadeAI" width={120} height={36} priority />
-        </Link>
-
-        <nav className="hidden items-center gap-1 md:flex">
-          {[
-            { href: '#features', label: t('features') },
-            { href: '#templates', label: t('templates') },
-          ].map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-            >
-              {item.label}
-            </a>
-          ))}
-          <Link
-            href="/interview"
-            className="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
-            {t('interview')}
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/logo.svg" alt="JadeAI" width={120} height={36} priority />
           </Link>
-        </nav>
+          <nav className="hidden items-center gap-1 md:flex">
+            {[
+              { href: '#features', label: t('features') },
+              { href: '#templates', label: t('templates') },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+              >
+                {item.label}
+              </a>
+            ))}
+            <Link
+              href="/interview"
+              className="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            >
+              {t('interview')}
+            </Link>
+          </nav>
+        </div>
 
         <div className="flex items-center gap-3">
           <a
