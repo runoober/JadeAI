@@ -21,7 +21,7 @@ export function RoundTransition({ nextInterviewer, onContinue, isLastRound }: Ro
       </p>
       {!isLastRound && (
         <>
-          <InterviewerBanner config={nextInterviewer} />
+          <InterviewerBanner config={nextInterviewer} questionCount={0} />
           <Button onClick={onContinue} size="lg">
             {t('nextRound')}
           </Button>
