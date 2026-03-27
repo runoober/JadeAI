@@ -26,9 +26,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     case 'hint':
       systemMessage = buildHintPrompt(locale);
       break;
-    case 'end_round':
-      systemMessage = buildEndRoundPrompt(locale);
-      break;
+    case 'end_round': {
+      // Mark current round as completed
+      if (roundId) {
+        await interviewRepository.updateRoundStatus(roundId, 'completed');
+      }
+      // Advance to next round or complete session
+      const rounds = await interviewRepository.findRoundsBySessionId(sessionId);
+      const currentIndex = rounds.findIndex((r: any) => r.id === roundId);
+      const nextRound = currentIndex >= 0 ? rounds[currentIndex + 1] : undefined;
+      if (nextRound) {
+        await interviewRepository.updateSessionRound(sessionId, currentIndex + 1);
+      } else {
+        await interviewRepository.updateSessionStatus(sessionId, 'completed');
+      }
+      return NextResponse.json({ success: true });
+    }
     case 'pause':
       await interviewRepository.updateSessionStatus(sessionId, 'paused');
       return NextResponse.json({ success: true });
