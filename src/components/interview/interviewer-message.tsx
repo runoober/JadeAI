@@ -1,5 +1,7 @@
 'use client';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { INTERVIEWER_COLORS, DEFAULT_INTERVIEWER_COLOR } from '@/lib/interview/interviewers';
 import type { InterviewerConfig } from '@/types/interview';
@@ -20,7 +22,9 @@ export function InterviewerMessage({ content, config }: InterviewerMessageProps)
       </div>
       <div className={cn('max-w-[80%] rounded-lg border px-4 py-3 text-sm', colorClass)}>
         <p className="mb-1 text-xs font-medium text-zinc-500">{config.name}</p>
-        <div className="whitespace-pre-wrap">{displayContent}</div>
+        <div className="prose prose-sm dark:prose-invert max-w-none">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{displayContent}</ReactMarkdown>
+        </div>
       </div>
     </div>
   );
