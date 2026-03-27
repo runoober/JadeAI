@@ -31,7 +31,7 @@ export function InterviewerBanner({ config, questionCount }: InterviewerBannerPr
       </div>
       <div className="text-center">
         <div className="text-xl font-bold text-pink-500">{questionCount}</div>
-        <div className="text-[10px] text-zinc-400">/{currentRound?.maxQuestions ?? 10} 题</div>
+        <div className="text-[10px] text-zinc-400">{currentRound?.maxQuestions ?? 10} 题</div>
       </div>
     </div>
   );
