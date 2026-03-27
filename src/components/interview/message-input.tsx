@@ -24,7 +24,7 @@ export function MessageInput({ input, isLoading, onChange, onSubmit }: MessageIn
         disabled={isLoading}
         className="min-h-[60px] flex-1 resize-none"
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
+          if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
             e.preventDefault();
             onSubmit(e as any);
           }
