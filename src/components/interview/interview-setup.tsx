@@ -80,7 +80,7 @@ export function InterviewSetup() {
         <Button
           onClick={handleStart}
           disabled={!canStart || isCreating}
-          className="w-full rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 py-6 text-base font-semibold hover:from-zinc-800 hover:to-zinc-700 dark:from-zinc-100 dark:to-zinc-200 dark:text-zinc-900"
+          className="w-full rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 py-6 text-base font-semibold hover:from-pink-600 hover:to-pink-700"
           size="lg"
         >
           {isCreating ? '...' : t('startInterview')}
