@@ -26,17 +26,17 @@ const TAG_STYLES: Record<string, string> = {
 };
 
 const STATUS_DOT: Record<string, string> = {
-  preparing: 'bg-yellow-500',
-  in_progress: 'bg-blue-500',
-  paused: 'bg-orange-500',
-  completed: 'bg-green-500',
+  preparing: 'bg-pink-300',
+  in_progress: 'bg-pink-500',
+  paused: 'bg-pink-400',
+  completed: 'bg-pink-500',
 };
 
 const PROGRESS_BAR: Record<string, string> = {
-  preparing: 'bg-yellow-500',
-  in_progress: 'bg-blue-500',
-  paused: 'bg-orange-500',
-  completed: 'bg-green-500',
+  preparing: 'bg-pink-300',
+  in_progress: 'bg-pink-500',
+  paused: 'bg-pink-400',
+  completed: 'bg-pink-500',
 };
 
 function getGradeColor(score: number): string {
@@ -135,13 +135,13 @@ export function InterviewCard({ session, onDelete }: InterviewCardProps) {
       <div className="flex items-center gap-2">
         {isCompleted ? (
           <Link href={`/interview/${session.id}/report`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full rounded-lg text-xs">
+            <Button variant="outline" size="sm" className="w-full rounded-lg border-pink-200 text-xs text-pink-600 hover:bg-pink-50 dark:border-pink-800 dark:text-pink-400 dark:hover:bg-pink-950">
               {t('lobby.viewReport')}
             </Button>
           </Link>
         ) : session.status === 'in_progress' || session.status === 'paused' ? (
           <Link href={`/interview/${session.id}`} className="flex-1">
-            <Button size="sm" className="w-full rounded-lg text-xs">
+            <Button size="sm" className="w-full rounded-lg bg-pink-500 text-xs hover:bg-pink-600">
               {t('lobby.continue')}
             </Button>
           </Link>
