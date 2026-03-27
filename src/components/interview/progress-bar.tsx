@@ -5,7 +5,11 @@ import { Check } from 'lucide-react';
 import { useInterviewStore } from '@/stores/interview-store';
 import type { InterviewerConfig } from '@/types/interview';
 
-export function ProgressBar() {
+interface ProgressBarProps {
+  onSwitchRound?: (index: number) => void;
+}
+
+export function ProgressBar({ onSwitchRound }: ProgressBarProps) {
   const { rounds, currentRoundIndex } = useInterviewStore();
 
   return (
@@ -14,22 +18,25 @@ export function ProgressBar() {
         const config = round.interviewerConfig as InterviewerConfig;
         const isCurrent = i === currentRoundIndex;
         const isDone = round.status === 'completed' || round.status === 'skipped';
+        const clickable = !!onSwitchRound && i !== currentRoundIndex;
 
         return (
           <div key={round.id} className="flex items-center">
             <div
+              onClick={clickable ? () => onSwitchRound(i) : undefined}
               className={cn(
                 'flex items-center gap-1.5 rounded-full border-2 px-3 py-1.5 text-xs font-medium transition-all',
                 isCurrent && 'border-pink-500 bg-gradient-to-r from-pink-50 to-white dark:from-pink-950 dark:to-zinc-900',
-                isDone && 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950',
-                !isCurrent && !isDone && 'border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800'
+                isDone && !isCurrent && 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-950',
+                !isCurrent && !isDone && 'border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800',
+                clickable && 'cursor-pointer hover:shadow-md'
               )}
             >
               <div
                 className={cn(
                   'flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold',
                   isCurrent && 'bg-pink-500 text-white',
-                  isDone && 'bg-green-500 text-white',
+                  isDone && !isCurrent && 'bg-green-500 text-white',
                   !isCurrent && !isDone && 'bg-zinc-300 text-white dark:bg-zinc-600'
                 )}
               >
@@ -38,7 +45,7 @@ export function ProgressBar() {
               <span
                 className={cn(
                   isCurrent && 'text-pink-700 dark:text-pink-300',
-                  isDone && 'text-green-700 dark:text-green-300',
+                  isDone && !isCurrent && 'text-green-700 dark:text-green-300',
                   !isCurrent && !isDone && 'text-zinc-400'
                 )}
               >

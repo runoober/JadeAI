@@ -17,6 +17,17 @@ import { RoundTransition } from './round-transition';
 import { ThinkingIndicator } from './thinking-indicator';
 import type { InterviewerConfig } from '@/types/interview';
 
+/** Convert DB messages to UIMessage format */
+function dbMessagesToUIMessages(dbMessages: any[]): UIMessage[] {
+  return dbMessages
+    .filter((m: any) => m.role !== 'system')
+    .map((m: any) => ({
+      id: m.id,
+      role: m.role === 'interviewer' ? ('assistant' as const) : ('user' as const),
+      parts: [{ type: 'text' as const, text: m.content }],
+    }));
+}
+
 interface InterviewRoomProps {
   sessionId: string;
   initialMessages?: UIMessage[];
@@ -25,12 +36,14 @@ interface InterviewRoomProps {
 export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps) {
   const t = useTranslations('interview.room');
   const router = useRouter();
-  const { rounds, currentRoundIndex, advanceToNextRound, setIsGeneratingReport } =
+  const { rounds, currentRoundIndex, setCurrentRoundIndex, advanceToNextRound, setIsGeneratingReport } =
     useInterviewStore();
   const [showTransition, setShowTransition] = useState(false);
+  const [isViewingHistory, setIsViewingHistory] = useState(false);
 
   const currentRound = rounds[currentRoundIndex];
   const interviewerConfig = currentRound?.interviewerConfig as InterviewerConfig;
+  const isRoundDone = currentRound?.status === 'completed' || currentRound?.status === 'skipped';
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, resetMessages, sendMessage, setMessages } =
     useInterviewChat({
@@ -48,7 +61,7 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
     }
   }, [initialMessages, setMessages]);
 
-  // Auto-send trigger to start interview (only if no history exists)
+  // Auto-send trigger to start interview (only if no history and round is active)
   const sentInitRef = useRef<string | null>(null);
   useEffect(() => {
     if (
@@ -56,6 +69,8 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
       messages.length === 0 &&
       !isLoading &&
       !loadedRef.current &&
+      !isViewingHistory &&
+      !isRoundDone &&
       sentInitRef.current !== currentRound.id
     ) {
       sentInitRef.current = currentRound.id;
@@ -65,20 +80,55 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
 
   // Detect round completion
   useEffect(() => {
-    if (!messages.length || isLoading) return;
+    if (!messages.length || isLoading || isViewingHistory) return;
     const lastMsg = messages[messages.length - 1];
     if (lastMsg.role !== 'assistant') return;
     const text = lastMsg.parts?.find((p: any) => p.type === 'text');
     if ((text as any)?.text?.includes('[ROUND_COMPLETE]')) {
       setShowTransition(true);
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, isViewingHistory]);
+
+  // Switch round: load messages from API
+  const handleSwitchRound = useCallback(async (index: number) => {
+    const targetRound = rounds[index];
+    if (!targetRound) return;
+
+    setShowTransition(false);
+    setCurrentRoundIndex(index);
+
+    // Fetch messages for this round
+    const fp = localStorage.getItem('jade_fingerprint');
+    try {
+      const res = await fetch(`/api/interview/${sessionId}`, {
+        headers: fp ? { 'x-fingerprint': fp } : {},
+      });
+      const { rounds: roundsWithMessages } = await res.json();
+      const roundData = roundsWithMessages.find((r: any) => r.id === targetRound.id);
+
+      if (roundData?.messages?.length > 0) {
+        setMessages(dbMessagesToUIMessages(roundData.messages));
+      } else {
+        setMessages([]);
+      }
+    } catch (err) {
+      console.error('Failed to load round messages:', err);
+      setMessages([]);
+    }
+
+    const isDone = targetRound.status === 'completed' || targetRound.status === 'skipped';
+    setIsViewingHistory(isDone);
+
+    // Reset init refs
+    loadedRef.current = true;
+    sentInitRef.current = targetRound.id;
+  }, [rounds, sessionId, setCurrentRoundIndex, setMessages]);
 
   const handleNextRound = useCallback(() => {
     setShowTransition(false);
+    setIsViewingHistory(false);
     advanceToNextRound();
     resetMessages();
-    // Reset init refs so the next round can auto-trigger
     loadedRef.current = false;
     sentInitRef.current = null;
   }, [advanceToNextRound, resetMessages]);
@@ -90,17 +140,14 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
 
   const lastAssistantMsg = [...messages].reverse().find((m) => m.role === 'assistant');
 
-  // Trigger AI after control actions (skip/hint)
   const handleTriggerAI = useCallback((text: string) => {
     sendMessage({ text });
   }, [sendMessage]);
 
-  // Directly end round without AI response
   const handleEndRound = useCallback(() => {
     setShowTransition(true);
   }, []);
 
-  // Hook must be called unconditionally before any early returns
   const controls = useInterviewControls({
     sessionId,
     roundId: currentRound?.id ?? '',
@@ -118,7 +165,7 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
     const nextRound = rounds[currentRoundIndex + 1];
     return (
       <div className="mx-auto max-w-4xl space-y-4">
-        <ProgressBar />
+        <ProgressBar onSwitchRound={handleSwitchRound} />
         <RoundTransition
           nextInterviewer={(nextRound?.interviewerConfig as InterviewerConfig) || interviewerConfig}
           onContinue={isLastRound ? handleGenerateReport : handleNextRound}
@@ -130,7 +177,7 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-3" style={{ height: 'calc(100vh - 180px)' }}>
-      <ProgressBar />
+      <ProgressBar onSwitchRound={handleSwitchRound} />
       <InterviewerBanner config={interviewerConfig} questionCount={messages.filter((m) => m.role === 'assistant').length} />
       <MessageList messages={messages} interviewerConfig={interviewerConfig} />
       {isLoading && (
@@ -138,15 +185,21 @@ export function InterviewRoom({ sessionId, initialMessages }: InterviewRoomProps
           <ThinkingIndicator config={interviewerConfig} />
         </div>
       )}
-      <div className="space-y-2 border-t border-zinc-100 pt-2 pb-2 dark:border-zinc-800">
-        {controls}
-        <MessageInput
-          input={input}
-          isLoading={isLoading}
-          onChange={handleInputChange}
-          onSubmit={handleSubmit}
-        />
-      </div>
+      {isViewingHistory ? (
+        <div className="border-t border-zinc-100 px-4 py-3 text-center text-sm text-zinc-400 dark:border-zinc-800">
+          {t('roundComplete')}
+        </div>
+      ) : (
+        <div className="space-y-2 border-t border-zinc-100 pt-2 pb-2 dark:border-zinc-800">
+          {controls}
+          <MessageInput
+            input={input}
+            isLoading={isLoading}
+            onChange={handleInputChange}
+            onSubmit={handleSubmit}
+          />
+        </div>
+      )}
     </div>
   );
 }
