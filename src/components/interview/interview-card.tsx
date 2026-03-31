@@ -139,14 +139,12 @@ export function InterviewCard({ session, onDelete }: InterviewCardProps) {
               {t('lobby.viewReport')}
             </Button>
           </Link>
-        ) : session.status === 'in_progress' || session.status === 'paused' ? (
+        ) : (
           <Link href={`/interview/${session.id}`} className="flex-1">
             <Button size="sm" className="w-full rounded-lg bg-pink-500 text-xs hover:bg-pink-600">
-              {t('lobby.continue')}
+              {session.status === 'preparing' ? t('lobby.start') : t('lobby.continue')}
             </Button>
           </Link>
-        ) : (
-          <div className="flex-1" />
         )}
         <span className="text-[10px] text-zinc-300 dark:text-zinc-600">
           {new Date(session.createdAt).toLocaleDateString()}

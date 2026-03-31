@@ -771,6 +771,7 @@
       "score": "综合评分",
       "rounds": "{count} 轮面试",
       "continue": "继续面试",
+      "start": "进入面试",
       "viewReport": "查看报告",
       "deleteConfirm": "确定要删除这场面试记录吗？此操作不可恢复。"
     },
