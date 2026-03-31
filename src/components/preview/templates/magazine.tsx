@@ -79,6 +79,7 @@ export function MagazineTemplate({ resume }: { resume: Resume }) {
 
 function MagazineSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     const text = (content as SummaryContent).text || '';
@@ -277,7 +278,7 @@ function MagazineSectionContent({ section, resume }: { section: any; resume: Res
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

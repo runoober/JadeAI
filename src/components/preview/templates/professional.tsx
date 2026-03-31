@@ -75,6 +75,7 @@ export function ProfessionalTemplate({ resume }: { resume: Resume }) {
 
 function ProfessionalSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-600" style={{ fontFamily: 'Georgia, serif' }} dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -258,7 +259,7 @@ function ProfessionalSectionContent({ section, lang }: { section: any; lang?: st
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

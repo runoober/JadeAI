@@ -81,6 +81,7 @@ export function LuxeTemplate({ resume }: { resume: Resume }) {
 
 function LuxeSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -259,7 +260,7 @@ function LuxeSectionContent({ section, lang }: { section: any; lang?: string }) 
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

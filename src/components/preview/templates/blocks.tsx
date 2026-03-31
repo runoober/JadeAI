@@ -81,6 +81,7 @@ export function BlocksTemplate({ resume }: { resume: Resume }) {
 
 function BlocksSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -289,7 +290,7 @@ function BlocksSectionContent({ section, resume }: { section: any; resume: Resum
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

@@ -77,6 +77,7 @@ export function BerlinTemplate({ resume }: { resume: Resume }) {
 
 function BerlinSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -275,7 +276,7 @@ function BerlinSectionContent({ section, lang }: { section: any; lang?: string }
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

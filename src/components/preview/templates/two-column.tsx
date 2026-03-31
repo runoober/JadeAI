@@ -171,6 +171,7 @@ export function TwoColumnTemplate({ resume }: { resume: Resume }) {
 
 function LeftSectionContent({ section }: { section: any }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'skills') {
     const categories = (content as SkillsContent).categories || [];
@@ -240,7 +241,7 @@ function LeftSectionContent({ section }: { section: any }) {
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-1.5">
         {content.items.map((item: any) => (
@@ -258,6 +259,7 @@ function LeftSectionContent({ section }: { section: any }) {
 
 function RightSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -434,7 +436,7 @@ function RightSectionContent({ section, resume }: { section: any; resume: Resume
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

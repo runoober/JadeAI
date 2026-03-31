@@ -64,6 +64,7 @@ export function InfographicTemplate({ resume }: { resume: Resume }) {
 
 function InfographicSectionContent({ section, colorIndex, resume }: { section: any; colorIndex: number; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
   const color = COLORS[colorIndex % COLORS.length];
 
   if (section.type === 'summary') {
@@ -253,7 +254,7 @@ function InfographicSectionContent({ section, colorIndex, resume }: { section: a
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

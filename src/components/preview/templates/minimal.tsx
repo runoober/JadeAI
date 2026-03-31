@@ -56,6 +56,7 @@ export function MinimalTemplate({ resume }: { resume: Resume }) {
 
 function MinimalSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm text-zinc-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -217,7 +218,7 @@ function MinimalSectionContent({ section, lang }: { section: any; lang?: string 
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

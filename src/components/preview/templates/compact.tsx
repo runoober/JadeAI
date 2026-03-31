@@ -72,6 +72,7 @@ export function CompactTemplate({ resume }: { resume: Resume }) {
 
 function CompactLeftContent({ section }: { section: any }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'skills') {
     return (
@@ -131,7 +132,7 @@ function CompactLeftContent({ section }: { section: any }) {
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-1">
         {content.items.map((item: any) => (
@@ -149,6 +150,7 @@ function CompactLeftContent({ section }: { section: any }) {
 
 function CompactRightContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-xs leading-relaxed text-zinc-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -253,7 +255,7 @@ function CompactRightContent({ section, resume }: { section: any; resume: Resume
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-1.5">
         {content.items.map((item: any) => (

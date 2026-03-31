@@ -78,6 +78,7 @@ export function ArtisticTemplate({ resume }: { resume: Resume }) {
 
 function ArtisticSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -290,7 +291,7 @@ function ArtisticSectionContent({ section, resume }: { section: any; resume: Res
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

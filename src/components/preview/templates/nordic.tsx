@@ -65,6 +65,7 @@ export function NordicTemplate({ resume }: { resume: Resume }) {
 
 function NordicSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm font-light leading-relaxed" style={{ color: SLATE_500 }} dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -234,7 +235,7 @@ function NordicSectionContent({ section, resume }: { section: any; resume: Resum
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

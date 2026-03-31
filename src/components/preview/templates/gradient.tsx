@@ -93,6 +93,7 @@ export function GradientTemplate({ resume }: { resume: Resume }) {
 
 function GradientSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -289,7 +290,7 @@ function GradientSectionContent({ section, resume }: { section: any; resume: Res
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

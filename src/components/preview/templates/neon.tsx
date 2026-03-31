@@ -88,6 +88,7 @@ export function NeonTemplate({ resume }: { resume: Resume }) {
 
 function NeonSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -302,7 +303,7 @@ function NeonSectionContent({ section, resume }: { section: any; resume: Resume 
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

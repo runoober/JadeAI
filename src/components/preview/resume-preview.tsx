@@ -241,6 +241,9 @@ export function ResumePreview({ resume }: ResumePreviewProps) {
   const scopeId = useId();
   const theme: ThemeConfig = { ...DEFAULT_THEME, ...(resume.themeConfig || {}) };
 
+  // Defensive: ensure resume.sections is always an array (AI may return invalid/empty data)
+  const safeResume = resume.sections ? resume : { ...resume, sections: [] };
+
   return (
     <>
       {/* Load the same Google Fonts used in PDF/HTML export so preview renders
@@ -249,8 +252,8 @@ export function ResumePreview({ resume }: ResumePreviewProps) {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
       <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       <div data-theme-scope={scopeId}>
-        <style dangerouslySetInnerHTML={{ __html: buildThemeCSS(scopeId, theme, resume.template) }} />
-        <Template resume={resume} />
+        <style dangerouslySetInnerHTML={{ __html: buildThemeCSS(scopeId, theme, safeResume.template) }} />
+        <Template resume={safeResume} />
       </div>
     </>
   );

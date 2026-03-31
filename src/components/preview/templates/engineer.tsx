@@ -83,6 +83,7 @@ export function EngineerTemplate({ resume }: { resume: Resume }) {
 
 function EngineerSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -327,7 +328,7 @@ function EngineerSectionContent({ section, resume }: { section: any; resume: Res
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

@@ -73,6 +73,7 @@ export function JapaneseTemplate({ resume }: { resume: Resume }) {
 
 function JapaneseSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm font-light leading-loose" style={{ color: PRIMARY }} dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -251,7 +252,7 @@ function JapaneseSectionContent({ section, lang }: { section: any; lang?: string
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

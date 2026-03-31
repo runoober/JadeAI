@@ -74,6 +74,7 @@ export function TeacherTemplate({ resume }: { resume: Resume }) {
 
 function TeacherSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -285,7 +286,7 @@ function TeacherSectionContent({ section, resume }: { section: any; resume: Resu
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

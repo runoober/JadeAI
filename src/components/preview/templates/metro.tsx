@@ -89,6 +89,7 @@ export function MetroTemplate({ resume }: { resume: Resume }) {
 
 function MetroSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -287,7 +288,7 @@ function MetroSectionContent({ section, resume }: { section: any; resume: Resume
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

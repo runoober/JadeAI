@@ -74,6 +74,7 @@ export function ModernTemplate({ resume }: { resume: Resume }) {
 
 function ModernSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -252,7 +253,7 @@ function ModernSectionContent({ section, lang }: { section: any; lang?: string }
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

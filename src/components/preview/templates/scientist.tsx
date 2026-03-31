@@ -78,6 +78,7 @@ export function ScientistTemplate({ resume }: { resume: Resume }) {
 
 function ScientistSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -278,7 +279,7 @@ function ScientistSectionContent({ section, resume }: { section: any; resume: Re
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

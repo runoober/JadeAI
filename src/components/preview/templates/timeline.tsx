@@ -57,6 +57,7 @@ export function TimelineTemplate({ resume }: { resume: Resume }) {
 
 function TimelineSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -246,7 +247,7 @@ function TimelineSectionContent({ section, resume }: { section: any; resume: Res
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

@@ -59,6 +59,7 @@ export function DesignerTemplate({ resume }: { resume: Resume }) {
 
 function DesignerSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="border-l-4 pl-4 text-sm leading-relaxed text-zinc-600" style={{ borderColor: CORAL }} dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -232,7 +233,7 @@ function DesignerSectionContent({ section, resume }: { section: any; resume: Res
     return <QrCodesPreview items={(content as any).items || []} />;
   }
 
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

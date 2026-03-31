@@ -74,6 +74,7 @@ export function SwissTemplate({ resume }: { resume: Resume }) {
 
 function SwissSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed" style={{ color: '#3f3f46' }} dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -251,7 +252,7 @@ function SwissSectionContent({ section, lang }: { section: any; lang?: string })
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

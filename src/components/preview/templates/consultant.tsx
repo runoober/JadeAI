@@ -70,6 +70,7 @@ export function ConsultantTemplate({ resume }: { resume: Resume }) {
 
 function ConsultantSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-gray-600" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -250,7 +251,7 @@ function ConsultantSectionContent({ section, resume }: { section: any; resume: R
   }
 
   // Generic items fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (

@@ -38,7 +38,7 @@ export const useResumeStore = create<ResumeStore>((set, get) => ({
     if (_saveTimeout) clearTimeout(_saveTimeout);
 
     // Normalize: ensure all items/categories in section content have id fields
-    const sections = resume.sections.map((s) => {
+    const sections = (resume.sections || []).map((s) => {
       const content = s.content as unknown as Record<string, unknown>;
       if (Array.isArray(content?.items)) {
         content.items = (content.items as any[]).map((item) =>

@@ -70,6 +70,7 @@ export function AtsTemplate({ resume }: { resume: Resume }) {
 
 function AtsSectionContent({ section, resume }: { section: any; resume: Resume }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return <p className="text-sm leading-relaxed text-zinc-700" dangerouslySetInnerHTML={{ __html: md((content as SummaryContent).text) }} />;
@@ -250,7 +251,7 @@ function AtsSectionContent({ section, resume }: { section: any; resume: Resume }
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-1">
         {content.items.map((item: any) => (

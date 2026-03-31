@@ -85,6 +85,7 @@ export function WatercolorTemplate({ resume }: { resume: Resume }) {
 
 function WatercolorSectionContent({ section, lang }: { section: any; lang?: string }) {
   const content = section.content;
+  if (!content) return null;
 
   if (section.type === 'summary') {
     return (
@@ -295,7 +296,7 @@ function WatercolorSectionContent({ section, lang }: { section: any; lang?: stri
   }
 
   // Generic fallback
-  if (content.items) {
+  if (content?.items) {
     return (
       <div className="space-y-2">
         {content.items.map((item: any) => (
